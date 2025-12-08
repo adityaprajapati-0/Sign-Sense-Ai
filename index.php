@@ -1,0 +1,548 @@
+<?php
+// index.php - SignSense AI full landing + demo page
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense AI · Hand Sign Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="icon" type="favicon.png" href="eye1.png" />
+</head>
+<body>
+  <!-- Background: optional WebGL canvas (used by background3d.js if three.js is loaded) -->
+  <canvas id="bg3d"></canvas>
+
+  <!-- Interactive background SVG blobs -->
+  <svg class="bg-orb bg-orb-1" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad1" cx="30%" cy="20%" r="80%">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/>
+        <stop offset="55%" stop-color="#4f46e5" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad1)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-2" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad2" cx="70%" cy="10%" r="80%">
+        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9"/>
+        <stop offset="55%" stop-color="#0f766e" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad2)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-3" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad3" cx="40%" cy="80%" r="80%">
+        <stop offset="0%" stop-color="#f97316" stop-opacity="0.85"/>
+        <stop offset="55%" stop-color="#581c87" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad3)" />
+  </svg>
+
+  <!-- Main page wrapper -->
+  <div class="page">
+    <!-- Navbar -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-mark"><img src="gly.gif" alt="Funny GIF" class="logo-mark">
+</div>
+        <div class="logo-text">SignSense AI</div>
+      </div>
+      <nav class="nav-links">
+        <a href="#top">Home</a>
+        <a href="#features">Features</a>
+        <a href="#deaf-support">Deaf Support</a>
+        <a href="#demo">Live Demo</a>
+        <a href="docs.php">Docs</a>
+        <a href="pricing.php">Pricing</a>
+        <a href="contact.php">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO SECTION -->
+      <section class="hero" id="top">
+        <div class="hero-content">
+          <div class="hero-tag">Real-time · Hand Sign Detector</div>
+          <h1>
+            Turn hand signs into
+            <span class="gradient-text">clear keywords for deaf users.</span>
+          </h1>
+          <p class="hero-subtitle">
+            SignSense AI reads simple hand poses like Open Hand, Thumbs Up and Fist, and turns them into large,
+            readable words such as “HELLO”, “YES” and “STOP” — ideal for deaf and hard-of-hearing communication.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="scrollToSection('demo')">
+              Try live camera demo
+            </button>
+            <button class="btn-ghost" onclick="scrollToSection('features')">
+              Explore how it works
+            </button>
+          </div>
+
+          <div class="hero-badges">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              Powered by MediaPipe Hands
+            </div>
+            <div class="badge">
+              <span class="badge-dot"></span>
+              PHP backend for sign labels
+            </div>
+          </div>
+
+          <p class="hero-note">
+            When prompted, allow camera access. Your camera feed stays in the browser — only anonymised hand landmarks
+            are sent to the PHP API for sign classification.
+          </p>
+        </div>
+
+        <!-- HERO RIGHT: INTERACTIVE ORB CARD -->
+        <div class="hero-visual">
+          <div class="hero-3d-card" id="heroOrbCard">
+            <div class="hero-3d-label">
+              <span class="hero-3d-dot"></span>
+              Gesture energy orb
+            </div>
+
+            <div class="hero-orb-wrapper">
+              <svg class="hero-orb-svg" viewBox="0 0 260 180" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <radialGradient id="orbGlow" cx="50%" cy="20%" r="70%">
+                    <stop offset="0%" stop-color="#22d3ee" stop-opacity="1"/>
+                    <stop offset="40%" stop-color="#6366f1" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="1"/>
+                  </radialGradient>
+
+                  <linearGradient id="orbRing" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#22c55e"/>
+                    <stop offset="50%" stop-color="#0ea5e9"/>
+                    <stop offset="100%" stop-color="#6366f1"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Main glow -->
+                <circle id="orbGlowCircle" cx="130" cy="90" r="70" fill="url(#orbGlow)" opacity="0.95" />
+                <circle cx="130" cy="90" r="86" fill="none" stroke="rgba(148,163,184,0.4)" stroke-width="1.5" />
+
+                <!-- Orbit rings -->
+                <ellipse id="orbOuterRing" cx="130" cy="90" rx="95" ry="30"
+                         fill="none" stroke="url(#orbRing)"
+                         stroke-width="1.4" stroke-linecap="round" stroke-opacity="0.9"/>
+                <ellipse id="orbInnerRing" cx="130" cy="90" rx="68" ry="22"
+                         fill="none" stroke="rgba(148,163,184,0.65)"
+                         stroke-width="1" stroke-dasharray="4 4"/>
+
+                <!-- Orbiting nodes -->
+                <circle id="orbNode1" cx="48" cy="88" r="5" fill="#22c55e" />
+                <circle id="orbNode2" cx="210" cy="92" r="5" fill="#06b6d4" />
+                <circle id="orbNode3" cx="130" cy="42" r="5" fill="#f97316" />
+
+                <!-- Central pulse -->
+                <circle id="orbCore" cx="130" cy="90" r="10" fill="#0ea5e9">
+                  <animate attributeName="r" values="9;13;9" dur="2.2s" repeatCount="indefinite" />
+                </circle>
+
+                <!-- Label text -->
+                <text id="orbText" x="130" y="96" text-anchor="middle" fill="#e5e7eb"
+                      font-size="10" font-weight="600">
+                  SIGN ORB
+                </text>
+              </svg>
+            </div>
+
+            <p class="hero-3d-caption">
+              Demo signs:
+              <span class="chip chip-open">Open Hand → “HELLO”</span>
+              <span class="chip chip-up">Thumbs Up → “YES”</span>
+              <span class="chip chip-fist">Fist → “STOP”</span>
+            </p>
+            <p class="hero-3d-caption small">
+              As the detection API recognises a sign, the orb can change color and label, giving instant visual feedback.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES SECTION (horizontal scroll) -->
+      <section class="section" id="features">
+        <h2 class="section-title">Built for accessibility-first experiences</h2>
+        <p class="section-subtitle">
+          Combine camera input, AI-powered recognition and bold visuals to assist deaf and hard-of-hearing users in
+          classrooms, clinics, reception desks and more.
+        </p>
+
+        <div class="feature-strip">
+          <article class="feature-card">
+            <h3>Live sign-to-text</h3>
+            <p>Every supported sign is turned into a big keyword on screen for hearing people to read.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Simple, memorable mapping</h3>
+            <p>Only a handful of signs, each mapped to a fixed word like “YES”, “STOP”, “HELP”.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Web-based, no install</h3>
+            <p>Runs in a modern browser with camera access — no special app or hardware required.</p>
+          </article>
+          <article class="feature-card">
+            <h3>PHP-friendly backend</h3>
+            <p>Send landmarks from JavaScript to a PHP API that picks the best sign label.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Designed for dark UI</h3>
+            <p>High-contrast gradients and glowing accents help users focus on the important text.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- USE CASES GRID -->
+      <section class="section section-alt" id="use-cases">
+        <h2 class="section-title">Use cases for deaf & hard-of-hearing users</h2>
+        <p class="section-subtitle">
+          SignSense AI is not a full sign language interpreter. It focuses on core, universal intents: greeting,
+          confirmation, stopping and asking for help.
+        </p>
+
+        <div class="usecase-grid">
+          <article class="usecase-card">
+            <div class="icon-circle">🏫</div>
+            <h3>Classroom support</h3>
+            <p>Students can say “YES” or “STOP” silently from their desk, and the teacher sees it on screen.</p>
+          </article>
+          <article class="usecase-card">
+            <div class="icon-circle">🏥</div>
+            <h3>Clinic intake</h3>
+            <p>Deaf patients can answer simple questions using basic hand signs while staff reads the keywords.</p>
+          </article>
+          <article class="usecase-card">
+            <div class="icon-circle">💼</div>
+            <h3>Reception desks</h3>
+            <p>Quick “HELLO” and “HELP” messages allow front desks to respond more inclusively.</p>
+          </article>
+          <article class="usecase-card">
+            <div class="icon-circle">🏠</div>
+            <h3>Home & family</h3>
+            <p>Family members can keep a laptop or tablet open and use it as a visual board for quick interactions.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- DEAF SUPPORT SECTION WITH BEAUTIFUL SVGS -->
+      <section class="section" id="deaf-support">
+        <h2 class="section-title">Designed around deaf-friendly keywords</h2>
+        <p class="section-subtitle">
+          Each basic sign is paired with a fixed keyword, making communication predictable and easy to remember.
+        </p>
+
+        <div class="scroll-row">
+          <!-- HELLO -->
+          <article class="scroll-card">
+            <div class="scroll-svg">
+              <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="helloGradOuter" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#0ea5e9"/>
+                  </linearGradient>
+                  <radialGradient id="helloGlow" cx="0%" cy="0%" r="80%">
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.7"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <circle cx="55" cy="50" r="38" fill="url(#helloGlow)" />
+                <rect x="18" y="20" rx="18" ry="18" width="80" height="60"
+                      fill="rgba(15,23,42,0.9)" stroke="rgba(148,163,184,0.8)" stroke-width="2"/>
+                <path d="M40 70 C35 55, 37 40, 43 35 C47 32, 52 33, 55 36
+                         C58 39, 61 44, 63 51 C65 58, 65 64, 64 68 Z"
+                      fill="url(#helloGradOuter)" stroke="none" />
+                <path d="M46 35 L48 26" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M51 36 L53 27" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M56 38 L58 30" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M32 29 L25 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M66 29 L73 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round"/>
+                <rect x="112" y="38" rx="12" ry="12" width="90" height="28"
+                      fill="rgba(15,23,42,0.95)" stroke="rgba(148,163,184,0.7)" stroke-width="1.6"/>
+                <text x="157" y="57" text-anchor="middle" fill="#22c55e" font-size="15" font-weight="600">
+                  HELLO
+                </text>
+              </svg>
+            </div>
+            <h3>Open Hand → “HELLO”</h3>
+            <p>Open Hand shows a glowing “HELLO” badge, making it easy to greet and start a conversation.</p>
+          </article>
+
+          <!-- YES -->
+          <article class="scroll-card">
+            <div class="scroll-svg">
+              <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="yesThumbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#16a34a"/>
+                  </linearGradient>
+                  <radialGradient id="yesGlow" cx="10%" cy="10%" r="80%">
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <circle cx="55" cy="55" r="40" fill="url(#yesGlow)" />
+                <circle cx="55" cy="55" r="32" fill="rgba(15,23,42,0.9)"
+                        stroke="rgba(148,163,184,0.85)" stroke-width="2"/>
+                <path d="M40 66 L40 47 C40 42, 42 38, 47 37
+                         L60 36 C63 36, 66 39, 66 43
+                         L66 58 C66 62, 63 66, 59 67 L45 68 Z"
+                      fill="url(#yesThumbGrad)" stroke="none" />
+                <rect x="40" y="62" width="16" height="10" rx="4" ry="4"
+                      fill="rgba(15,23,42,1)" stroke="rgba(34,197,94,0.9)" stroke-width="1.6"/>
+                <path d="M30 55 C32 63, 39 69, 48 70"
+                      fill="none" stroke="rgba(34,197,94,0.7)" stroke-width="2" stroke-linecap="round"/>
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
+                      fill="rgba(15,23,42,0.95)" stroke="rgba(34,197,94,0.7)" stroke-width="1.6"/>
+                <text x="157" y="57" text-anchor="middle" fill="#22c55e" font-size="15" font-weight="600">
+                  YES
+                </text>
+              </svg>
+            </div>
+            <h3>Thumbs Up → “YES”</h3>
+            <p>Thumbs Up creates a bright, positive “YES” label, perfect for confirming choices quickly.</p>
+          </article>
+
+          <!-- STOP -->
+          <article class="scroll-card">
+            <div class="scroll-svg">
+              <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="stopGradOuter" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#f97316"/>
+                    <stop offset="100%" stop-color="#ef4444"/>
+                  </linearGradient>
+                  <radialGradient id="stopGlow" cx="15%" cy="20%" r="85%">
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <circle cx="55" cy="55" r="40" fill="url(#stopGlow)" />
+                <polygon points="35,30 55,24 75,30 84,48 75,66 55,72 35,66 26,48"
+                         fill="rgba(15,23,42,0.95)" stroke="url(#stopGradOuter)" stroke-width="3"/>
+                <rect x="42" y="42" width="26" height="18" rx="5" ry="5"
+                      fill="url(#stopGradOuter)" stroke="none"/>
+                <rect x="42" y="40" width="20" height="6" rx="3" ry="3"
+                      fill="#fee2e2" stroke="none" opacity="0.35"/>
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
+                      fill="rgba(15,23,42,0.95)" stroke="rgba(248,113,113,0.8)" stroke-width="1.6"/>
+                <text x="157" y="57" text-anchor="middle" fill="#f97316" font-size="15" font-weight="600">
+                  STOP
+                </text>
+              </svg>
+            </div>
+            <h3>Fist → “STOP”</h3>
+            <p>A firm fist lights a red “STOP”, making it clear when someone wants to pause or is uncomfortable.</p>
+          </article>
+
+          <!-- CUSTOM HELP -->
+          <article class="scroll-card">
+            <div class="scroll-svg">
+              <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="helpGradOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#38bdf8"/>
+                    <stop offset="100%" stop-color="#6366f1"/>
+                  </linearGradient>
+                  <radialGradient id="helpGlow" cx="10%" cy="0%" r="80%">
+                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <circle cx="55" cy="55" r="38" fill="url(#helpGlow)" />
+                <rect x="18" y="26" rx="14" ry="14" width="70" height="36"
+                      fill="rgba(15,23,42,0.95)" stroke="rgba(148,163,184,0.8)" stroke-width="2"/>
+                <rect x="30" y="40" rx="12" ry="12" width="70" height="36"
+                      fill="none" stroke="rgba(148,163,184,0.6)" stroke-width="2"/>
+                <path d="M45 45 C45 39, 49 35, 55 35
+                         C61 35, 65 39, 65 43
+                         C65 47, 63 49, 60 51
+                         C57 53, 55 55, 55 58"
+                      fill="none" stroke="url(#helpGradOuter)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="55" cy="63" r="2.8" fill="url(#helpGradOuter)" />
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
+                      fill="rgba(15,23,42,0.95)" stroke="rgba(59,130,246,0.8)" stroke-width="1.6"/>
+                <text x="157" y="57" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="600">
+                  HELP
+                </text>
+              </svg>
+            </div>
+            <h3>Custom mappings</h3>
+            <p>Change the keyword to “HELP” or any phrase in your PHP config for emergency or support scenarios.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- PIPELINE / TIMELINE SECTION -->
+      <section class="section section-alt" id="pipeline">
+        <h2 class="section-title">From hand sign to keyword in four steps</h2>
+        <p class="section-subtitle">
+          The pipeline is simple and debuggable from end to end.
+        </p>
+
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="timeline-badge">Step 1</div>
+            <h3>Camera capture</h3>
+            <p>The browser captures live video frames once the user grants camera permission.</p>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-badge">Step 2</div>
+            <h3>Landmark detection</h3>
+            <p>MediaPipe Hands (via JavaScript) extracts 3D landmarks for the visible hand.</p>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-badge">Step 3</div>
+            <h3>PHP sign classifier</h3>
+            <p>Your PHP endpoint receives the landmarks and returns a sign label and confidence.</p>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-badge">Step 4</div>
+            <h3>Keyword display</h3>
+            <p>The UI updates a big keyword, changes orb color and can log everything in the debug panel.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- LIVE DEMO SECTION -->
+      <section class="section" id="demo">
+        <h2 class="section-title">Live camera demo</h2>
+        <p class="section-subtitle">
+          Show your hand to the camera. The browser detects landmarks, sends them to the PHP API, and updates the
+          detected sign and keyword. This is where deaf users see their gesture translated to text for others.
+        </p>
+
+        <div class="demo-layout">
+          <!-- LEFT: CAMERA PREVIEW -->
+          <div class="demo-box">
+            <h3>Camera preview</h3>
+            <p class="demo-sub">
+              Allow camera access when the browser asks. Your video never leaves the device — only numerical landmarks
+              go to <code>api/handsign.php</code>.
+            </p>
+
+            <div class="video-wrapper">
+              <video id="camera" autoplay playsinline muted></video>
+              <canvas id="overlayCanvas"></canvas>
+            </div>
+
+            <div class="sign-status">
+              <div class="sign-pill">
+                <span id="signDot" class="sign-dot"></span>
+                <span id="signText">Looking for a hand...</span>
+              </div>
+              <p id="signConfidence" class="sign-note">Confidence: 0.00</p>
+              <p class="sign-keyword">
+                Keyword output: <span id="signKeyword">—</span>
+              </p>
+              <p class="demo-hint">
+                Try an Open Hand, Thumbs Up or Fist. These are mapped to “HELLO”, “YES” and “STOP” by default.
+              </p>
+            </div>
+          </div>
+
+          <!-- RIGHT: API DEBUG / LOGS -->
+          <div class="demo-box">
+            <h3>API debug</h3>
+            <p class="demo-sub">
+              This panel helps you debug the PHP backend. It shows what the API returns for each detected frame.
+            </p>
+
+            <div class="debug-panel">
+              <div class="debug-header">
+                <span>Last API response</span>
+                <span id="apiStatusTag" class="debug-tag">idle</span>
+              </div>
+              <pre id="apiDebug" class="debug-content">
+{
+  "success": false,
+  "message": "Waiting for data..."
+}
+              </pre>
+            </div>
+
+            <p class="demo-hint">
+              Make sure <code>api/handsign.php</code> is reachable and returns JSON like:
+              <code>{"success": true, "sign": "Thumbs Up", "confidence": 0.91}</code>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA SECTION -->
+      <section class="section" id="cta">
+        <div class="cta-layout">
+          <div>
+            <h2 class="section-title">Ready to go deeper?</h2>
+            <p class="section-subtitle">
+              Explore the docs for integration details, or jump straight into a Pro plan with higher limits and
+              dedicated support.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <button class="btn-primary" onclick="window.location.href='pricing.php'">
+              Start Pro
+            </button>
+            <button class="btn-ghost" onclick="window.location.href='docs.php'">
+              View docs
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div>© <span id="year"></span> SignSense AI · Contact: 
+        <a href="mailto:adityaprajapati1234567@gmail.com">adityaprajapati1234567@gmail.com</a>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a class="social-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer">
+          <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.24 8.25H4.8V24H.24V8.25zM8.45 8.25h4.35v2.14h.06c.61-1.16 2.11-2.38 4.34-2.38 4.64 0 5.49 3.05 5.49 7.02V24h-4.56v-7.16c0-1.71-.03-3.92-2.39-3.92-2.4 0-2.77 1.87-2.77 3.8V24H8.45V8.25z"/>
+          </svg>
+        </a>
+        <a class="social-link" href="https://twitter.com" target="_blank" rel="noreferrer">
+          <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19.5 3.01H22L17 8.57L22.96 21H17.99L14.39 13.39L10.03 21H5.79L11.16 14.02L5.5 3.01H10.62L13.83 9.92L19.5 3.01Z"/>
+          </svg>
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts: three.js (optional for 3D), hand detection libs, and app/background logic -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<!-- MediaPipe Hands (AI model in JS) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
+
+<!-- Your background + app logic -->
+<script src="assets/js/background3d.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
+
+  
