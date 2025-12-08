@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com/?lines=Real-Time+Sign+Language+Recognition;AI+%2B+Computer+Vision+in+Browser;Built+with+PHP%2C+Python%2C+JavaScript%2C+CSS;Accessibility+for+Everyone+🌍&center=true&width=820&height=45&color=06b6d4&pause=1200" />
+  
 </p>
 
 <p align="center">
