@@ -621,15 +621,18 @@
 
       try {
         if (apiStatusTag) {
-          apiStatusTag.textContent = "calling python...";
+          apiStatusTag.textContent = "calling API...";
           apiStatusTag.style.color = "#e5e7eb";
         }
 
-        const res = await fetch("http://127.0.0.1:5000/api/handsign", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ landmarks }),
-        });
+        const res = await fetch(
+          "https://signsense-api-hw1c.onrender.com/api/handsign",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ landmarks }),
+          },
+        );
 
         const json = await res.json();
         if (apiDebug) apiDebug.textContent = JSON.stringify(json, null, 2);
