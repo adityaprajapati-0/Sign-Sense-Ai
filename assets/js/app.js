@@ -626,7 +626,7 @@
         }
 
         const res = await fetch(
-          "https://signsense-api-hw1c.onrender.com/api/handsign",
+          "https://signsense-api-final.adityaprajapati1234567.workers.dev",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
