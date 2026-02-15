@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hand Sign Logic</title>
+</head>
+<body>
+
+<script>
+/*
+  PHP logic rewritten EXACTLY in JavaScript
+  No server required
+*/
+
+function classifyHandSign(input) {
+  if (
+    !input ||
+    !Array.isArray(input.landmarks) ||
+    input.landmarks.length === 0
+  ) {
+    return {
+      success: false,
+      error: "NO_LANDMARKS",
+      message: "No landmarks provided to API."
+    };
+  }
+
+  const landmarks = input.landmarks;
+
+  const byName = {};
+  landmarks.forEach((lm, i) => {
+    if (lm.name) byName[lm.name] = { ...lm, _index: i };
+  });
+
+  const lmGet = (name, index) => byName[name] || landmarks[index] || null;
+
+  const wrist     = lmGet("wrist", 0);
+  const thumbTip  = lmGet("thumb_tip", 4);
+  const indexTip  = lmGet("index_finger_tip", 8);
+  const middleTip = lmGet("middle_finger_tip", 12);
+  const ringTip   = lmGet("ring_finger_tip", 16);
+  const pinkyTip  = lmGet("pinky_finger_tip", 20);
+
+  if (!wrist) {
+    return { success: true, sign: "Unknown", confidence: 0.1 };
+  }
+
+  const tips = [indexTip, middleTip, ringTip, pinkyTip].filter(Boolean);
+
+  if (tips.length < 2 || !thumbTip) {
+    return { success: true, sign: "Unknown", confidence: 0.2 };
+  }
+
+  let minY = Infinity, maxY = -Infinity;
+  landmarks.forEach(lm => {
+    if (typeof lm.y === "number") {
+      minY = Math.min(minY, lm.y);
+      maxY = Math.max(maxY, lm.y);
+    }
+  });
+
+  const boxHeight = Math.max(60, maxY - minY);
+
+  const dist = (a, b) => Math.hypot(
+    (a.x || 0) - (b.x || 0),
+    (a.y || 0) - (b.y || 0)
+  );
+
+  const avgTips =
+    tips.reduce((s, t) => s + dist(t, wrist), 0) / tips.length;
+  const thumbDist = dist(thumbTip, wrist);
+
+  const normTips = (avgTips / boxHeight) * 100;
+  const normThumb = (thumbDist / boxHeight) * 100;
+
+  let sign = "Unknown";
+  let confidence = 0.3;
+
+  if (normTips > 55 && normThumb > 45) {
+    sign = "Open Hand";
+    confidence = 0.9;
+  } else if (normTips < 35 && normThumb > 50 && thumbTip.y < wrist.y) {
+    sign = "Thumbs Up";
+    confidence = 0.85;
+  } else if (normTips < 35) {
+    sign = "Fist";
+    confidence = 0.8;
+  }
+
+  return { success: true, sign, confidence };
+}
+
+/* Example usage:
+const result = classifyHandSign({ landmarks });
+console.log(result);
+*/
+</script>
+
+</body>
+</html>

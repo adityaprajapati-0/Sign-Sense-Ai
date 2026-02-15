@@ -1,16 +1,303 @@
-<?php
-// index.php - SignSense AI full landing + demo page
-?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>SignSense AI · Hand Sign Detector</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="icon" type="favicon.png" href="eye1.png" />
+  <style>
+    /* STUNNING CAMERA INTERFACE REDESIGN */
+    .camera-ui-container {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    /* Thin Premium Volume Slider */
+    .zoom-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 320px;
+      padding: 0.8rem 1.4rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 100px;
+      transition: all 0.3s;
+    }
+
+    .zoom-slider-container:hover {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .slider-icon {
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .camera-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 2px;
+      /* 🔥 Ultra thin track */
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .camera-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 12px;
+      /* 🔥 Smaller thumb */
+      width: 12px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      margin-top: -5px;
+      /* Alignment for thin track */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .camera-slider:hover::-webkit-slider-thumb {
+      transform: scale(1.2);
+      background: var(--accent2);
+      box-shadow: 0 0 15px var(--accent2), 0 0 0 6px rgba(6, 182, 212, 0.1);
+    }
+
+    .zoom-value-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent2);
+      font-family: var(--font-mono, monospace);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* Switch Button - Clean Below Layout */
+    .camera-actions {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .cam-switch-premium {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* 🔥 This centers content horizontally */
+      text-align: center;
+      gap: 0.7rem;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 0.8rem 2.2rem;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .cam-switch-premium:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent2);
+      box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(15, 23, 42, 1));
+    }
+
+    .cam-switch-premium .cam-icon {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.4s ease;
+    }
+
+    .cam-switch-premium.switching .cam-icon {
+      animation: rotateSwitcher 0.4s ease;
+    }
+
+    @keyframes rotateSwitcher {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Force camera box to contain the zoom */
+    .camera-box {
+      overflow: hidden !important;
+      border-radius: 20px;
+      position: relative;
+    }
+
+    /* Ultra Thin Slider */
+    .camera-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 1px !important;
+      /* 🔥 Ultra-thin line */
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .camera-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 10px;
+      /* 🔥 Tiny thumb */
+      width: 10px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--accent2);
+      cursor: pointer;
+      margin-top: -4.5px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .camera-slider:hover::-webkit-slider-thumb {
+      transform: scale(1.3);
+      background: var(--accent2);
+      box-shadow: 0 0 12px var(--accent2);
+    }
+
+    /* LUXURY TOAST NOTIFICATION */
+    .toast-container {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      pointer-events: none;
+    }
+
+    .toast-card {
+      pointer-events: auto;
+      min-width: 320px;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      /* Subtle red border */
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(239, 68, 68, 0.1);
+      transform: translateX(120%);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast-card.show {
+      transform: translateX(0);
+    }
+
+    .toast-icon-box {
+      width: 42px;
+      height: 42px;
+      background: rgba(239, 68, 68, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f87171;
+      flex-shrink: 0;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    .toast-msg {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      display: block;
+      line-height: 1.4;
+    }
+
+    .toast-close {
+      background: transparent;
+      border: none;
+      color: #475569;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .toast-close:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 640px) {
+      .toast-container {
+        top: auto;
+        bottom: 2rem;
+        right: 1.25rem;
+        left: 1.25rem;
+      }
+
+      .toast-card {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    /* HIDE ZOOM AND CENTER ACTION ON MOBILE */
+    @media (max-width: 768px) {
+      .zoom-slider-container {
+        display: none !important;
+      }
+
+      .camera-actions {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+      }
+
+      .cam-switch-premium {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <div id="toastContainer" class="toast-container"></div>
+
   <!-- Background: optional WebGL canvas (used by background3d.js if three.js is loaded) -->
   <canvas id="bg3d"></canvas>
 
@@ -18,9 +305,9 @@
   <svg class="bg-orb bg-orb-1" viewBox="0 0 260 260" aria-hidden="true">
     <defs>
       <radialGradient id="bgOrbGrad1" cx="30%" cy="20%" r="80%">
-        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/>
-        <stop offset="55%" stop-color="#4f46e5" stop-opacity="0.8"/>
-        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#4f46e5" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
       </radialGradient>
     </defs>
     <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad1)" />
@@ -29,9 +316,9 @@
   <svg class="bg-orb bg-orb-2" viewBox="0 0 260 260" aria-hidden="true">
     <defs>
       <radialGradient id="bgOrbGrad2" cx="70%" cy="10%" r="80%">
-        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9"/>
-        <stop offset="55%" stop-color="#0f766e" stop-opacity="0.7"/>
-        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#0f766e" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
       </radialGradient>
     </defs>
     <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad2)" />
@@ -40,9 +327,9 @@
   <svg class="bg-orb bg-orb-3" viewBox="0 0 260 260" aria-hidden="true">
     <defs>
       <radialGradient id="bgOrbGrad3" cx="40%" cy="80%" r="80%">
-        <stop offset="0%" stop-color="#f97316" stop-opacity="0.85"/>
-        <stop offset="55%" stop-color="#581c87" stop-opacity="0.8"/>
-        <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#f97316" stop-opacity="0.85" />
+        <stop offset="55%" stop-color="#581c87" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
       </radialGradient>
     </defs>
     <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad3)" />
@@ -53,18 +340,28 @@
     <!-- Navbar -->
     <header class="nav">
       <div class="nav-left">
-        <div class="logo-mark"><img src="gly.gif" alt="Funny GIF" class="logo-mark">
-</div>
+        <div class="logo-mark">
+          <img src="gly.gif" alt="Funny GIF" class="logo-mark">
+        </div>
         <div class="logo-text">SignSense AI</div>
       </div>
+
+      <!-- ✅ Add these two lines (hamburger toggle) -->
+      <!-- <input type="checkbox" id="navToggle" class="nav-toggle-input" /> -->
+      <label for="navToggle" class="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
       <nav class="nav-links">
         <a href="#top">Home</a>
         <a href="#features">Features</a>
         <a href="#deaf-support">Deaf Support</a>
         <a href="#demo">Live Demo</a>
-        <a href="docs.php">Docs</a>
-        <a href="pricing.php">Pricing</a>
-        <a href="contact.php">Contact</a>
+        <a href="docs.html">Docs</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact</a>
       </nav>
     </header>
 
@@ -120,15 +417,15 @@
               <svg class="hero-orb-svg" viewBox="0 0 260 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <radialGradient id="orbGlow" cx="50%" cy="20%" r="70%">
-                    <stop offset="0%" stop-color="#22d3ee" stop-opacity="1"/>
-                    <stop offset="40%" stop-color="#6366f1" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="#020617" stop-opacity="1"/>
+                    <stop offset="0%" stop-color="#22d3ee" stop-opacity="1" />
+                    <stop offset="40%" stop-color="#6366f1" stop-opacity="1" />
+                    <stop offset="100%" stop-color="#020617" stop-opacity="1" />
                   </radialGradient>
 
                   <linearGradient id="orbRing" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#22c55e"/>
-                    <stop offset="50%" stop-color="#0ea5e9"/>
-                    <stop offset="100%" stop-color="#6366f1"/>
+                    <stop offset="0%" stop-color="#22c55e" />
+                    <stop offset="50%" stop-color="#0ea5e9" />
+                    <stop offset="100%" stop-color="#6366f1" />
                   </linearGradient>
                 </defs>
 
@@ -137,12 +434,10 @@
                 <circle cx="130" cy="90" r="86" fill="none" stroke="rgba(148,163,184,0.4)" stroke-width="1.5" />
 
                 <!-- Orbit rings -->
-                <ellipse id="orbOuterRing" cx="130" cy="90" rx="95" ry="30"
-                         fill="none" stroke="url(#orbRing)"
-                         stroke-width="1.4" stroke-linecap="round" stroke-opacity="0.9"/>
-                <ellipse id="orbInnerRing" cx="130" cy="90" rx="68" ry="22"
-                         fill="none" stroke="rgba(148,163,184,0.65)"
-                         stroke-width="1" stroke-dasharray="4 4"/>
+                <ellipse id="orbOuterRing" cx="130" cy="90" rx="95" ry="30" fill="none" stroke="url(#orbRing)"
+                  stroke-width="1.4" stroke-linecap="round" stroke-opacity="0.9" />
+                <ellipse id="orbInnerRing" cx="130" cy="90" rx="68" ry="22" fill="none" stroke="rgba(148,163,184,0.65)"
+                  stroke-width="1" stroke-dasharray="4 4" />
 
                 <!-- Orbiting nodes -->
                 <circle id="orbNode1" cx="48" cy="88" r="5" fill="#22c55e" />
@@ -155,8 +450,7 @@
                 </circle>
 
                 <!-- Label text -->
-                <text id="orbText" x="130" y="96" text-anchor="middle" fill="#e5e7eb"
-                      font-size="10" font-weight="600">
+                <text id="orbText" x="130" y="96" text-anchor="middle" fill="#e5e7eb" font-size="10" font-weight="600">
                   SIGN ORB
                 </text>
               </svg>
@@ -169,7 +463,8 @@
               <span class="chip chip-fist">Fist → “STOP”</span>
             </p>
             <p class="hero-3d-caption small">
-              As the detection API recognises a sign, the orb can change color and label, giving instant visual feedback.
+              As the detection API recognises a sign, the orb can change color and label, giving instant visual
+              feedback.
             </p>
           </div>
         </div>
@@ -253,28 +548,27 @@
               <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="helloGradOuter" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#22c55e"/>
-                    <stop offset="100%" stop-color="#0ea5e9"/>
+                    <stop offset="0%" stop-color="#22c55e" />
+                    <stop offset="100%" stop-color="#0ea5e9" />
                   </linearGradient>
                   <radialGradient id="helloGlow" cx="0%" cy="0%" r="80%">
-                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.7"/>
-                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.7" />
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0" />
                   </radialGradient>
                 </defs>
 
                 <circle cx="55" cy="50" r="38" fill="url(#helloGlow)" />
-                <rect x="18" y="20" rx="18" ry="18" width="80" height="60"
-                      fill="rgba(15,23,42,0.9)" stroke="rgba(148,163,184,0.8)" stroke-width="2"/>
+                <rect x="18" y="20" rx="18" ry="18" width="80" height="60" fill="rgba(15,23,42,0.9)"
+                  stroke="rgba(148,163,184,0.8)" stroke-width="2" />
                 <path d="M40 70 C35 55, 37 40, 43 35 C47 32, 52 33, 55 36
-                         C58 39, 61 44, 63 51 C65 58, 65 64, 64 68 Z"
-                      fill="url(#helloGradOuter)" stroke="none" />
-                <path d="M46 35 L48 26" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
-                <path d="M51 36 L53 27" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
-                <path d="M56 38 L58 30" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round"/>
-                <path d="M32 29 L25 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round"/>
-                <path d="M66 29 L73 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round"/>
-                <rect x="112" y="38" rx="12" ry="12" width="90" height="28"
-                      fill="rgba(15,23,42,0.95)" stroke="rgba(148,163,184,0.7)" stroke-width="1.6"/>
+                         C58 39, 61 44, 63 51 C65 58, 65 64, 64 68 Z" fill="url(#helloGradOuter)" stroke="none" />
+                <path d="M46 35 L48 26" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round" />
+                <path d="M51 36 L53 27" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round" />
+                <path d="M56 38 L58 30" stroke="#22c55e" stroke-width="3.2" stroke-linecap="round" />
+                <path d="M32 29 L25 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round" />
+                <path d="M66 29 L73 22" stroke="rgba(96,165,250,0.9)" stroke-width="2.2" stroke-linecap="round" />
+                <rect x="112" y="38" rx="12" ry="12" width="90" height="28" fill="rgba(15,23,42,0.95)"
+                  stroke="rgba(148,163,184,0.7)" stroke-width="1.6" />
                 <text x="157" y="57" text-anchor="middle" fill="#22c55e" font-size="15" font-weight="600">
                   HELLO
                 </text>
@@ -290,28 +584,27 @@
               <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="yesThumbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#22c55e"/>
-                    <stop offset="100%" stop-color="#16a34a"/>
+                    <stop offset="0%" stop-color="#22c55e" />
+                    <stop offset="100%" stop-color="#16a34a" />
                   </linearGradient>
                   <radialGradient id="yesGlow" cx="10%" cy="10%" r="80%">
-                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
-                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6" />
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0" />
                   </radialGradient>
                 </defs>
 
                 <circle cx="55" cy="55" r="40" fill="url(#yesGlow)" />
-                <circle cx="55" cy="55" r="32" fill="rgba(15,23,42,0.9)"
-                        stroke="rgba(148,163,184,0.85)" stroke-width="2"/>
+                <circle cx="55" cy="55" r="32" fill="rgba(15,23,42,0.9)" stroke="rgba(148,163,184,0.85)"
+                  stroke-width="2" />
                 <path d="M40 66 L40 47 C40 42, 42 38, 47 37
                          L60 36 C63 36, 66 39, 66 43
-                         L66 58 C66 62, 63 66, 59 67 L45 68 Z"
-                      fill="url(#yesThumbGrad)" stroke="none" />
-                <rect x="40" y="62" width="16" height="10" rx="4" ry="4"
-                      fill="rgba(15,23,42,1)" stroke="rgba(34,197,94,0.9)" stroke-width="1.6"/>
-                <path d="M30 55 C32 63, 39 69, 48 70"
-                      fill="none" stroke="rgba(34,197,94,0.7)" stroke-width="2" stroke-linecap="round"/>
-                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
-                      fill="rgba(15,23,42,0.95)" stroke="rgba(34,197,94,0.7)" stroke-width="1.6"/>
+                         L66 58 C66 62, 63 66, 59 67 L45 68 Z" fill="url(#yesThumbGrad)" stroke="none" />
+                <rect x="40" y="62" width="16" height="10" rx="4" ry="4" fill="rgba(15,23,42,1)"
+                  stroke="rgba(34,197,94,0.9)" stroke-width="1.6" />
+                <path d="M30 55 C32 63, 39 69, 48 70" fill="none" stroke="rgba(34,197,94,0.7)" stroke-width="2"
+                  stroke-linecap="round" />
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28" fill="rgba(15,23,42,0.95)"
+                  stroke="rgba(34,197,94,0.7)" stroke-width="1.6" />
                 <text x="157" y="57" text-anchor="middle" fill="#22c55e" font-size="15" font-weight="600">
                   YES
                 </text>
@@ -327,24 +620,22 @@
               <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="stopGradOuter" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#f97316"/>
-                    <stop offset="100%" stop-color="#ef4444"/>
+                    <stop offset="0%" stop-color="#f97316" />
+                    <stop offset="100%" stop-color="#ef4444" />
                   </linearGradient>
                   <radialGradient id="stopGlow" cx="15%" cy="20%" r="85%">
-                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.6"/>
-                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.6" />
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0" />
                   </radialGradient>
                 </defs>
 
                 <circle cx="55" cy="55" r="40" fill="url(#stopGlow)" />
-                <polygon points="35,30 55,24 75,30 84,48 75,66 55,72 35,66 26,48"
-                         fill="rgba(15,23,42,0.95)" stroke="url(#stopGradOuter)" stroke-width="3"/>
-                <rect x="42" y="42" width="26" height="18" rx="5" ry="5"
-                      fill="url(#stopGradOuter)" stroke="none"/>
-                <rect x="42" y="40" width="20" height="6" rx="3" ry="3"
-                      fill="#fee2e2" stroke="none" opacity="0.35"/>
-                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
-                      fill="rgba(15,23,42,0.95)" stroke="rgba(248,113,113,0.8)" stroke-width="1.6"/>
+                <polygon points="35,30 55,24 75,30 84,48 75,66 55,72 35,66 26,48" fill="rgba(15,23,42,0.95)"
+                  stroke="url(#stopGradOuter)" stroke-width="3" />
+                <rect x="42" y="42" width="26" height="18" rx="5" ry="5" fill="url(#stopGradOuter)" stroke="none" />
+                <rect x="42" y="40" width="20" height="6" rx="3" ry="3" fill="#fee2e2" stroke="none" opacity="0.35" />
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28" fill="rgba(15,23,42,0.95)"
+                  stroke="rgba(248,113,113,0.8)" stroke-width="1.6" />
                 <text x="157" y="57" text-anchor="middle" fill="#f97316" font-size="15" font-weight="600">
                   STOP
                 </text>
@@ -360,28 +651,28 @@
               <svg viewBox="0 0 220 120" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="helpGradOuter" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#38bdf8"/>
-                    <stop offset="100%" stop-color="#6366f1"/>
+                    <stop offset="0%" stop-color="#38bdf8" />
+                    <stop offset="100%" stop-color="#6366f1" />
                   </linearGradient>
                   <radialGradient id="helpGlow" cx="10%" cy="0%" r="80%">
-                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>
-                    <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6" />
+                    <stop offset="100%" stop-color="#020617" stop-opacity="0" />
                   </radialGradient>
                 </defs>
 
                 <circle cx="55" cy="55" r="38" fill="url(#helpGlow)" />
-                <rect x="18" y="26" rx="14" ry="14" width="70" height="36"
-                      fill="rgba(15,23,42,0.95)" stroke="rgba(148,163,184,0.8)" stroke-width="2"/>
-                <rect x="30" y="40" rx="12" ry="12" width="70" height="36"
-                      fill="none" stroke="rgba(148,163,184,0.6)" stroke-width="2"/>
+                <rect x="18" y="26" rx="14" ry="14" width="70" height="36" fill="rgba(15,23,42,0.95)"
+                  stroke="rgba(148,163,184,0.8)" stroke-width="2" />
+                <rect x="30" y="40" rx="12" ry="12" width="70" height="36" fill="none" stroke="rgba(148,163,184,0.6)"
+                  stroke-width="2" />
                 <path d="M45 45 C45 39, 49 35, 55 35
                          C61 35, 65 39, 65 43
                          C65 47, 63 49, 60 51
-                         C57 53, 55 55, 55 58"
-                      fill="none" stroke="url(#helpGradOuter)" stroke-width="3" stroke-linecap="round"/>
+                         C57 53, 55 55, 55 58" fill="none" stroke="url(#helpGradOuter)" stroke-width="3"
+                  stroke-linecap="round" />
                 <circle cx="55" cy="63" r="2.8" fill="url(#helpGradOuter)" />
-                <rect x="112" y="38" rx="14" ry="14" width="90" height="28"
-                      fill="rgba(15,23,42,0.95)" stroke="rgba(59,130,246,0.8)" stroke-width="1.6"/>
+                <rect x="112" y="38" rx="14" ry="14" width="90" height="28" fill="rgba(15,23,42,0.95)"
+                  stroke="rgba(59,130,246,0.8)" stroke-width="1.6" />
                 <text x="157" y="57" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="600">
                   HELP
                 </text>
@@ -445,6 +736,36 @@
               <video id="camera" autoplay playsinline muted></video>
               <canvas id="overlayCanvas"></canvas>
             </div>
+            <!-- Redesigned Camera Control Logic -->
+            <div class="camera-ui-container">
+              <!-- Bar 1: Thin Volume-style Zoom Slider -->
+              <div class="zoom-slider-container" id="zoomDesktopBar">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  class="slider-icon">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="range" id="zoomRange" min="1" max="3" step="0.05" value="1" class="camera-slider">
+                <div class="zoom-value-label"><span id="zoomVal">1.0</span>x</div>
+              </div>
+
+              <!-- Bar 2: Actions -->
+              <div class="camera-actions">
+                <button id="switchCameraBtn" class="cam-switch-premium">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                  <span>Switch Camera</span>
+                </button>
+              </div>
+            </div>
+
+
+
+
+
+
 
             <div class="sign-status">
               <div class="sign-pill">
@@ -500,10 +821,10 @@
             </p>
           </div>
           <div class="cta-actions">
-            <button class="btn-primary" onclick="window.location.href='pricing.php'">
+            <button class="btn-primary" onclick="window.location.href='pricing.html'">
               Start Pro
             </button>
-            <button class="btn-ghost" onclick="window.location.href='docs.php'">
+            <button class="btn-ghost" onclick="window.location.href='docs.html'">
               View docs
             </button>
           </div>
@@ -513,36 +834,40 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-      <div>© <span id="year"></span> SignSense AI · Contact: 
+      <div>© <span id="year"></span> SignSense AI · Contact:
         <a href="mailto:adityaprajapati1234567@gmail.com">adityaprajapati1234567@gmail.com</a>
       </div>
       <div class="footer-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
-        <a class="social-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer">
+        <a class="social-link" href="https://www.linkedin.com/in/aditya-prajapati-428a02297/" target="_blank"
+          rel="noreferrer">
           <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.24 8.25H4.8V24H.24V8.25zM8.45 8.25h4.35v2.14h.06c.61-1.16 2.11-2.38 4.34-2.38 4.64 0 5.49 3.05 5.49 7.02V24h-4.56v-7.16c0-1.71-.03-3.92-2.39-3.92-2.4 0-2.77 1.87-2.77 3.8V24H8.45V8.25z"/>
+            <path
+              d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.24 8.25H4.8V24H.24V8.25zM8.45 8.25h4.35v2.14h.06c.61-1.16 2.11-2.38 4.34-2.38 4.64 0 5.49 3.05 5.49 7.02V24h-4.56v-7.16c0-1.71-.03-3.92-2.39-3.92-2.4 0-2.77 1.87-2.77 3.8V24H8.45V8.25z" />
           </svg>
         </a>
-        <a class="social-link" href="https://twitter.com" target="_blank" rel="noreferrer">
+        <a class="social-link" href="https://x.com/PrajapatiAdi_?t=mrzkhXU-HoGanbBscM2ivw&s=09" target="_blank"
+          rel="noreferrer">
           <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M19.5 3.01H22L17 8.57L22.96 21H17.99L14.39 13.39L10.03 21H5.79L11.16 14.02L5.5 3.01H10.62L13.83 9.92L19.5 3.01Z"/>
+            <path
+              d="M19.5 3.01H22L17 8.57L22.96 21H17.99L14.39 13.39L10.03 21H5.79L11.16 14.02L5.5 3.01H10.62L13.83 9.92L19.5 3.01Z" />
           </svg>
         </a>
       </div>
     </footer>
   </div>
+  <!-- Local script removed as it was redundant and contained errors -->
 
   <!-- Scripts: three.js (optional for 3D), hand detection libs, and app/background logic -->
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
-<!-- MediaPipe Hands (AI model in JS) -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
+  <!-- MediaPipe Hands (AI model in JS) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
 
-<!-- Your background + app logic -->
-<script src="assets/js/background3d.js"></script>
-<script src="assets/js/app.js"></script>
+  <!-- Your background + app logic -->
+  <script src="assets/js/background3d.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
-</html>
 
-  
+</html>

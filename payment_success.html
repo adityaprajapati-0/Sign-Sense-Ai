@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment requested – SignSense AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="eye1.png" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <canvas id="bg3d"></canvas>
+
+  <div class="page">
+
+    <!-- NAV (embedded) -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-mark">
+          <img src="gly.gif" alt="Funny GIF" class="logo-mark">
+        </div>
+        <span class="logo-text">SignSense AI</span>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="docs.html">Docs</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+    <!-- END NAV -->
+
+    <main>
+      <section class="section section-tight">
+        <h1 class="section-title">Payment request created 🎉</h1>
+        <p class="section-subtitle">
+          In a real environment, a payment request would now be sent to your UPI app.
+          For this demo we simply show what would be sent to your payment gateway.
+        </p>
+
+        <div class="api-box">
+          <h3>Request summary</h3>
+
+          <p class="demo-sub">
+            Plan: <strong id="planText">Unknown plan</strong>
+          </p>
+
+          <p class="demo-sub">
+            UPI ID: <strong id="upiText">unknown@upi</strong>
+          </p>
+
+          <p class="demo-sub" id="noteRow" style="display:none;">
+            Note: <em id="noteText"></em>
+          </p>
+
+          <p class="demo-sub" style="margin-top:1rem;">
+            Next step (for production): use this data on your backend to create a real payment
+            request via your PSP, listen for webhooks, and update the user’s plan in your database.
+          </p>
+        </div>
+
+        <button class="btn-primary" style="margin-top:1.2rem;"
+                onclick="window.location.href='index.html'">
+          Back to home
+        </button>
+      </section>
+    </main>
+
+    <!-- FOOTER (embedded) -->
+    <footer class="footer">
+      <span>© <span id="year"></span> SignSense AI.</span>
+    </footer>
+  </div>
+
+  <script src="assets/js/background3d.js"></script>
+  <script src="assets/js/app.js"></script>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // -------- PHP POST logic replaced with JS --------
+    const params = new URLSearchParams(window.location.search);
+
+    const upi  = params.get("upi_id") || "unknown@upi";
+    const plan = params.get("plan") || "Unknown plan";
+    const note = params.get("note");
+
+    document.getElementById("upiText").textContent = upi;
+    document.getElementById("planText").textContent = plan;
+
+    if (note) {
+      document.getElementById("noteText").textContent = note;
+      document.getElementById("noteRow").style.display = "block";
+    }
+  </script>
+</body>
+</html>

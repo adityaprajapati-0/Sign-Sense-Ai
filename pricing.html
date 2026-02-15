@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense AI – Pricing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="eye1.png" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Background: optional WebGL canvas (used by background3d.js if three.js is loaded) -->
+  <canvas id="bg3d"></canvas>
+
+  <!-- Interactive background SVG blobs -->
+  <svg class="bg-orb bg-orb-1" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad1" cx="30%" cy="20%" r="80%">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#4f46e5" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad1)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-2" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad2" cx="70%" cy="10%" r="80%">
+        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#0f766e" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad2)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-3" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad3" cx="40%" cy="80%" r="80%">
+        <stop offset="0%" stop-color="#f97316" stop-opacity="0.85" />
+        <stop offset="55%" stop-color="#581c87" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad3)" />
+  </svg>
+
+  <div class="page">
+
+    <!-- NAV (embedded) -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-mark">
+          <img src="gly.gif" alt="Funny GIF" class="logo-mark" />
+        </div>
+        <div class="logo-text">SignSense AI</div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#deaf-support">Deaf Support</a>
+        <a href="index.html#demo">Live Demo</a>
+        <a href="docs.html">Docs</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+    <!-- END NAV -->
+
+    <main>
+      <section class="section section-tight">
+        <h1 class="section-title">Pricing</h1>
+        <p class="section-subtitle">
+          Start free, then upgrade to Pro when you’re ready to ship gesture-powered experiences.
+          For custom setups, our team can help you integrate with your stack.
+        </p>
+
+        <div class="pricing-grid">
+
+          <!-- FREE -->
+          <div class="pricing-card">
+            <div class="pricing-badge">Free</div>
+            <h2>Sandbox</h2>
+            <p class="pricing-price">₹0<span>/month</span></p>
+            <ul class="pricing-list">
+              <li>Local-only detection (no external billing)</li>
+              <li>Single developer / side project</li>
+              <li>Full access to source code</li>
+              <li>Community support via email</li>
+            </ul>
+            <button class="btn-ghost" disabled>Current plan</button>
+          </div>
+
+          <!-- PRO -->
+          <div class="pricing-card pricing-featured">
+            <div class="pricing-badge badge-hot">Popular</div>
+            <h2>Pro</h2>
+            <p class="pricing-price">₹499<span>/month</span></p>
+            <ul class="pricing-list">
+              <li>Priority email support</li>
+              <li>Guided integration call</li>
+              <li>Production-ready docs & patterns</li>
+              <li>Early access to new sign templates</li>
+            </ul>
+            <button class="btn-primary" onclick="window.location.href='payment.html'">
+              Start Pro
+            </button>
+            <p class="pricing-note">
+              “Start Pro” takes you to a UPI-based payment request page. In production, connect to
+              your PSP or payment gateway.
+            </p>
+          </div>
+
+          <!-- ENTERPRISE -->
+          <div class="pricing-card">
+            <div class="pricing-badge">Enterprise</div>
+            <h2>Custom</h2>
+            <p class="pricing-price">Let’s talk</p>
+            <ul class="pricing-list">
+              <li>On-prem or VPC deployment</li>
+              <li>Custom SLAs & uptime commitments</li>
+              <li>Dedicated solution engineer</li>
+              <li>Compliance & security reviews</li>
+            </ul>
+            <a href="contact.html" class="btn-ghost btn-link">Contact sales</a>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER (embedded) -->
+    <footer class="footer">
+      <span>© <span id="year"></span> SignSense AI.</span>
+    </footer>
+  </div>
+
+  <script src="assets/js/background3d.js"></script>
+  <script src="assets/js/app.js"></script>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>

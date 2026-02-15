@@ -6,7 +6,7 @@ from flask_cors import CORS
 import math
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # allow browser calls from your PHP domain
 
 
 # ------------- helpers -------------
@@ -172,5 +172,5 @@ def api_handsign():
 
 
 if __name__ == "__main__":
-    # Run on localhost:5000 to match your JS fetch("http://127.0.0.1:5000/api/handsign")
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    # Local dev; on Render gunicorn will run app:app
+    app.run(host="0.0.0.0", port=5000, debug=True)

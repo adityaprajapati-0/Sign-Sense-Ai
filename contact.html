@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense AI – Contact sales</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="eye1.png" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+
+  <canvas id="bg3d"></canvas>
+
+  <!-- Background orbs -->
+  <svg class="bg-orb bg-orb-1" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad1" cx="30%" cy="20%" r="80%">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#4f46e5" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad1)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-2" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad2" cx="70%" cy="10%" r="80%">
+        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9" />
+        <stop offset="55%" stop-color="#0f766e" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad2)" />
+  </svg>
+
+  <svg class="bg-orb bg-orb-3" viewBox="0 0 260 260" aria-hidden="true">
+    <defs>
+      <radialGradient id="bgOrbGrad3" cx="40%" cy="80%" r="80%">
+        <stop offset="0%" stop-color="#f97316" stop-opacity="0.85" />
+        <stop offset="55%" stop-color="#581c87" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <circle cx="130" cy="130" r="120" fill="url(#bgOrbGrad3)" />
+  </svg>
+
+  <div class="page">
+
+    <!-- NAV (embedded) -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-mark">
+          <img src="gly.gif" alt="Funny GIF" class="logo-mark">
+        </div>
+        <div class="logo-text">SignSense AI</div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#deaf-support">Deaf Support</a>
+        <a href="index.html#demo">Live Demo</a>
+        <a href="docs.html">Docs</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+    <!-- END NAV -->
+
+    <main>
+      <section class="section section-tight">
+        <h1 class="section-title">Contact sales</h1>
+        <p class="section-subtitle">
+          Tell us briefly about your project, and we’ll get back with integration ideas
+          and the best plan for your team.
+        </p>
+
+        <div class="contact-layout">
+          <div class="contact-card">
+            <h2>Send us a message</h2>
+
+            <form id="contactForm" class="contact-form">
+              <div class="form-field">
+                <label for="name">Full name</label>
+                <input type="text" id="name" required />
+              </div>
+
+              <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" required />
+              </div>
+
+              <div class="form-field">
+                <label for="company">Company / project (optional)</label>
+                <input type="text" id="company" />
+              </div>
+
+              <div class="form-field">
+                <label for="message">How can we help?</label>
+                <textarea id="message" rows="4" required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary" id="sendBtn">Send message</button>
+              <p class="demo-hint" id="contactStatus"></p>
+            </form>
+          </div>
+
+          <div class="contact-card">
+            <h2>What to expect</h2>
+            <ul class="pricing-list">
+              <li>We reply within 1–2 business days.</li>
+              <li>We can review Loom, Figma, or GitHub repo.</li>
+              <li>We’ll suggest integration patterns and plans.</li>
+            </ul>
+            <p>adityaprajapati1234567@gmail.com</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER (embedded) -->
+    <footer class="footer">
+      <span>© <span id="year"></span> SignSense AI.</span>
+    </footer>
+  </div>
+
+  <script src="assets/js/background3d.js"></script>
+  <script src="assets/js/app.js"></script>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    emailjs.init("FJ75i1g53zFfLo1_6");
+
+    document.getElementById("contactForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const status = document.getElementById("contactStatus");
+      const btn = document.getElementById("sendBtn");
+
+      btn.disabled = true;
+      status.textContent = "Sending...";
+
+      emailjs.send("service_lmhycgf", "template_v16cq8t", {
+        from_name: name.value,
+        reply_to: email.value,
+        message: message.value,
+      }).then(() => {
+        status.textContent = "Message sent successfully!";
+        btn.disabled = false;
+        this.reset();
+      }).catch(() => {
+        status.textContent = "Failed to send message.";
+        btn.disabled = false;
+      });
+    });
+  </script>
+</body>
+
+</html>
