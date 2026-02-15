@@ -626,7 +626,7 @@
         }
 
         const res = await fetch(
-          "https://signsense-api-final.adityaprajapati1234567.workers.dev",
+          "https://signsense-api.adi-ai-chatbot.workers.dev",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
