@@ -1,116 +1,153 @@
-<!-- ================= TOP ANIMATED BANNER ================= -->
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&height=230&text=SignSense%20AI&fontAlign=50&fontAlignY=40&color=0:4f46e5,100:06b6d4&fontColor=ffffff&fontSize=60&desc=Real-Time%20Sign%20Language%20Recognition%20Using%20AI&descAlignY=65&descAlign=50" />
-</p>
+# SignSense AI - Hand Sign Recognition
 
-<p align="center">
-  
-</p>
+A real-time hand sign detection web application powered by MediaPipe Hands and Cloudflare Workers.
 
-<p align="center">
-  🔴 <b>LIVE PROJECT</b><br/>
-  <a href="https://adixdd-signsense-ai.netlify.app/">
-    <code>https://adixdd-signsense-ai.netlify.app/</code>
-  </a>
-</p>
+## 🚀 Live Demo
 
-<br/>
-
-<!-- ================= TECH BADGES ================= -->
-<p align="center">
-  <img src="https://img.shields.io/badge/PHP-Backend-777BB4?style=for-the-badge&logo=php&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Python-AI%2FML-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?style=for-the-badge&logo=javascript&logoColor=000"/>
-  <img src="https://img.shields.io/badge/CSS-Modern%20UI-1572B6?style=for-the-badge&logo=css3&logoColor=white"/>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Active%20Development-success?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Focus-Accessibility-blueviolet?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Platform-Web%20Application-0ea5e9?style=flat-square"/>
-</p>
-
----
-
-## 🧠 About SignSense AI
-
-**SignSense AI** is a real-time **Sign Language Recognition Web Application** built to reduce communication barriers between **deaf / hard-of-hearing individuals** and the hearing population.
-
-The project integrates **AI-driven computer vision (Python)** with a **modern, responsive web interface using PHP, JavaScript, and CSS**.
-
----
-
-## 🎬 Live Preview
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/adc0b51f-2825-440f-9d23-94160161ee6b" width="780" style="border-radius:18px;" />
-</p>
-
-<p align="center">
-  👉 <a href="https://adixdd-signsense-ai.netlify.app/"><b>Open Live Project</b></a>
-</p>
-
----
+**Frontend**: [Deployed on Netlify](https://your-site.netlify.app) _(Update after deployment)_  
+**Backend API**: [https://signsense-api.adi-ai-chatbot.workers.dev](https://signsense-api.adi-ai-chatbot.workers.dev)
 
 ## ✨ Features
 
-✅ Real-time sign language detection  
-✅ Live webcam input  
-✅ AI-powered gesture recognition  
-✅ Browser-based (no installation required)  
-✅ Modern animated UI  
-✅ Glassmorphism & gradient design  
-✅ Fully responsive (mobile / tablet / desktop)  
-✅ Accessibility-first approach  
+- **Real-time hand detection** using MediaPipe Hands
+- **Instant sign classification** via Cloudflare Workers edge network
+- **10+ recognized signs**: Open Hand, Peace, Rock, Thumbs Up, Fist, Pinch, and more
+- **Luxury UI** with glassmorphism, smooth animations, and premium design
+- **Ultra-thin zoom slider** for precise camera control
+- **Responsive design** optimized for desktop and mobile
+- **Global edge deployment** for <50ms latency worldwide
 
----
+## 🛠️ Tech Stack
 
-## 🛠️ Technologies Used
+### Frontend
 
-### 🎨 Frontend
-- **HTML5** – semantic markup  
-- **CSS3** – animations, glass UI, gradients, responsive layout  
-- **JavaScript** – webcam handling, canvas overlays, live UI updates  
+- Pure HTML5, CSS3, and Vanilla JavaScript
+- MediaPipe Hands for real-time hand tracking
+- Glassmorphism and modern UI design patterns
+- Hosted on **Netlify**
 
-### 🔧 Backend
-- **PHP** – API routing, server-side integration  
-- **Python** – AI logic, computer vision, gesture recognition  
+### Backend
 
-### 🤖 AI & Computer Vision
-- Hand landmark detection  
-- Gesture classification models  
-- Real-time inference pipeline  
+- Cloudflare Workers (JavaScript runtime)
+- Global edge network deployment
+- Zero cold starts
+- REST API: `POST https://signsense-api.adi-ai-chatbot.workers.dev`
 
----
+## 🎯 Recognized Hand Signs
 
-## 🔄 System Workflow
+- ✋ **Open Hand** - All 5 fingers extended
+- 👍 **Thumbs Up** - Thumb only
+- ✌️ **Peace** - Index + middle fingers
+- 🤘 **Rock** - Index + pinky fingers
+- ✊ **Fist** - No fingers extended
+- ☝️ **Point** - Index finger only
+- 🤏 **Pinch** - Thumb + index close together
+- 🖕 **Middle** - Middle finger only
+- 🤙 **Pinky** - Pinky finger only
+- 🤟 **Ring Pinky Middle** - Three fingers (awesome sign)
+- ✋ **Four Fingers** - Four fingers extended
+- 🤚 **Three Fingers** - Three fingers extended
 
-```text
-👋 User Performs Sign
-        ↓
-📷 Camera Captures Video (JavaScript)
-        ↓
-🌐 PHP API Forwards Data
-        ↓
-🤖 Python AI Model Processes Gesture
-        ↓
-✅ Recognized Sign Shown on UI
+## 📦 Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/adityaprajapati-0/Sign-Sense-Ai.git
+cd Sign-Sense-Ai
+
+# Serve locally
+python -m http.server 3000
+
+# Open browser
+http://localhost:3000
 ```
-## 🎯 Use Cases
 
-- ♿ Real-time communication support for deaf / hard-of-hearing users  
-- 🎓 Educational platforms for learning sign language  
-- 🏫 Inclusive classrooms and training institutes  
-- 🏢 Public service kiosks and help desks  
-- 🤖 AI & Computer Vision demonstration projects  
-- 💼 Portfolio and research showcase  
+## 🚀 Deploy to Netlify
 
----
+### Option 1: GitHub Integration (Recommended)
+
+1. Push your code to GitHub
+2. Go to [app.netlify.com](https://app.netlify.com)
+3. Click "New site from Git"
+4. Select your repository
+5. Deploy settings:
+   - **Build command**: _(leave empty)_
+   - **Publish directory**: `/`
+6. Deploy!
+
+### Option 2: Netlify CLI
+
+```bash
+npm install -g netlify-cli
+netlify login
+netlify deploy --prod
+```
+
+## 🔧 API Documentation
+
+### Endpoint
+
+```
+POST https://signsense-api.adi-ai-chatbot.workers.dev
+Content-Type: application/json
+```
+
+### Request Body
+
+```json
+{
+  "landmarks": [
+    { "x": 0.5, "y": 0.5, "z": 0.1, "name": "wrist" },
+    { "x": 0.6, "y": 0.4, "z": 0.2, "name": "thumb_tip" }
+    // ... 21 total landmarks
+  ]
+}
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "sign": "Open Hand",
+  "confidence": 0.92,
+  "debug": {
+    "thumb": true,
+    "index": true,
+    "middle": true,
+    "ring": true,
+    "pinky": true,
+    "reason": "OPEN_HAND"
+  }
+}
+```
+
+## 🎨 UI Features
+
+- **Luxury Zoom Slider** - Ultra-thin volume-style control
+- **Camera Switch Animation** - 360° rotating icon
+- **Toast Notifications** - Premium glassmorphic error feedback
+- **Smooth Navigation** - Zero-jitter page transitions
+- **Background Orbs** - Interactive parallax animations
+- **Responsive Layout** - Optimized for all devices
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Aditya Prajapati**  
-Web Developer | AI Enthusiast  
+**Aditya Prajapati**
 
-🌐 **Live Project:**  
-https://adixdd-signsense-ai.netlify.app/
+- Email: adityaprajapati1234567@gmail.com
+- GitHub: [@adityaprajapati-0](https://github.com/adityaprajapati-0)
+
+## 🙏 Acknowledgments
+
+- MediaPipe Hands by Google
+- Cloudflare Workers
+- Netlify
+
+---
+
+Made with ❤️ for accessible communication
